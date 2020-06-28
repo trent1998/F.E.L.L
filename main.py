@@ -1,7 +1,7 @@
 import cv2
 import time
 
-capture = cv2.VideoCapture(0)
+capture = cv2.VideoCapture('cs4.mp4')
 time.sleep(2)
 
 
@@ -47,7 +47,7 @@ while(True):
                 counter += 1
                 
             if counter > 14:
-                cv2.putText(frame, 'FALL', (x, y), cv2.FONT_HERSHEY_TRIPLEX, 0.5, (255,255,255), 2)
+                cv2.putText(frame, 'Fall Detected', (x-10, y-10), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (255,255,255), 2)
                 cv2.rectangle(frame,(x,y),(x+w,y+h),(0,0,255),2)
                 
             #If the person sands up again or has not fallen counter will be 0
