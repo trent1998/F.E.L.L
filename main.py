@@ -16,5 +16,15 @@ while(capture.isOpened()):
     cv2.destroyAllWindows() 
 else: 
     print("Camera is not connected") 
+    
+    
+    
+    
+# loop for accessing frames of the video
+while True:
+	frame = vs.read()
+	frame = frame if args.get("video", None) is None else frame[1]
+	if frame is None:
+		break
 
 
