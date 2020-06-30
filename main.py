@@ -1,7 +1,7 @@
 import cv2
 import time
 
-capture = cv2.VideoCapture('cs4.mp4')
+capture = cv2.VideoCapture(0)
 time.sleep(2)
 
 
@@ -15,7 +15,7 @@ while(True):
     
     #Convert all the frame to gray scale and subtract the background
     try:
-        blured_frame = cv2.GaussianBlur(frame,(3,3),cv2.BORDER_DEFAULT)
+        blured_frame = cv2.GaussianBlur(frame,(1,1),cv2.BORDER_DEFAULT)
         gray = cv2.cvtColor(blured_frame, cv2.COLOR_BGR2GRAY) # Convert the image to grayscale
         fgmask = backSubtractor.apply(gray)  #background subtraction
         
@@ -46,7 +46,7 @@ while(True):
 
             
             #If the height of the counters of the object is less than width
-            if maxArea > 2000: #If the area of the mask is greater than this then only there is human
+            if maxArea > 2500: #If the area of the mask is greater than this then only there is human
                 if h < w:
                     counter += 1
             
