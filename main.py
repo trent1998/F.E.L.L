@@ -15,7 +15,8 @@ while(True):
     
     #Convert all the frame to gray scale and subtract the background
     try:
-        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY) # Convert the image to grayscale
+        blured_frame = cv2.GaussianBlur(frame,(3,3),cv2.BORDER_DEFAULT)
+        gray = cv2.cvtColor(blured_frame, cv2.COLOR_BGR2GRAY) # Convert the image to grayscale
         fgmask = backSubtractor.apply(gray)  #background subtraction
         
         #Find contours of the object that is stored as foregroundmask in variable fgmask
@@ -25,41 +26,45 @@ while(True):
         
             # A list that will hold areas of all the moving objects in the frames
             areas = []
-            #Get area of the object in the frame and then append it
+            #Get area of all moving object in the frame and then append it
             for contour in contours:
                 area = cv2.contourArea(contour)
                 areas.append(area)
             
-            #Find the object with the maximum area in the array 
+            #Find the object with the maximum area in the array that would be considered as human
             maxArea = max(areas, default = 0)
-
             maxAreaIdx = areas.index(maxArea) #index of object with maximum area
-
-            cnt = contours[maxAreaIdx]
-
-            M = cv2.moments(cnt)
             
-            x, y, w, h = cv2.boundingRect(cnt)
-
-            cv2.drawContours(fgmask, [cnt], 0, (255,255,255), 3, maxLevel = 0)
+            # Get the object with the maximum area   
+            human = contours[maxAreaIdx]
             
-            if h < w:
-                counter += 1
-                
-            if counter > 14:
-                cv2.putText(frame, 'Fall Detected', (x-10, y-10), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (255,255,255), 2)
-                cv2.rectangle(frame,(x,y),(x+w,y+h),(0,0,255),2)
-                
-            #If the person sands up again or has not fallen counter will be 0
-            if h > w:
-                counter = 0 
-                cv2.rectangle(frame,(x,y),(x+w,y+h),(0,255,0),2)
+            #Draw contours against the object in masked image
+            cv2.drawContours(fgmask, [human], 0, (129,255,0), 10, maxLevel = 1)
+            
+            # Make a rectangle around the object with maximum area .
+            x, y, w, h = cv2.boundingRect(human)
+
+            
+            #If the height of the counters of the object is less than width
+            if maxArea > 2000: #If the area of the mask is greater than this then only there is human
+                if h < w:
+                    counter += 1
+            
+                if counter > 17:
+                    cv2.putText(frame, 'Fall Detected', (x-10, y-10), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (255,255,255), 2)
+                    cv2.rectangle(frame,(x,y),(x+w,y+h),(0,0,255),2)
+
+                #If the person stands up again
+                if h > w:
+                    counter = 0 
+                    cv2.rectangle(frame,(x,y),(x+w,y+h),(0,255,0),2)
 
 
             cv2.imshow('F.E.L.L', frame)
-        
-            if cv2.waitKey(33) == 27:
-             break
+            cv2.imshow('Maksed',fgmask)
+
+            if cv2.waitKey(33) == ord('q'):
+                break
     except:
         break
 cv2.destroyAllWindows()
