@@ -1,7 +1,7 @@
 import cv2
 import time
 
-capture = cv2.VideoCapture(0)
+capture = cv2.VideoCapture('Video1.MOV')
 time.sleep(2)
 
 
