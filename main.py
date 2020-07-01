@@ -4,6 +4,12 @@ import time
 capture = cv2.VideoCapture('video1.MOV')
 time.sleep(2)
 
+# Ensures the video is set for 1080p
+try:
+    capture.set(3, 1920)
+    capture.set(4, 1080)
+except:
+    print("camera resolution not accepted")
 
 # Detect the moving part in the image and remove the still background
 backSubtractor = cv2.createBackgroundSubtractorKNN(detectShadows=False)
