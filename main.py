@@ -1,13 +1,14 @@
 import cv2
 import time
 
-capture = cv2.VideoCapture('video1.MOV')
+capture = cv2.VideoCapture('cam7.avi')
 time.sleep(2)
 
 
 # Detect the moving part in the image and remove the still background
-backSubtractor = cv2.createBackgroundSubtractorKNN(detectShadows=False)
+backSubtractor = cv2.createBackgroundSubtractorKNN(history =350,detectShadows=False)
 counter = 0
+fall = False
 
 while(True):
     #Convert the video into the frames
@@ -15,7 +16,7 @@ while(True):
     
     #Convert all the frame to gray scale and subtract the background
     try:
-        blured_frame = cv2.GaussianBlur(frame,(1,1),cv2.BORDER_DEFAULT)
+        blured_frame = cv2.GaussianBlur(frame,(3,3),cv2.BORDER_DEFAULT)
         gray = cv2.cvtColor(blured_frame, cv2.COLOR_BGR2GRAY) # Convert the image to grayscale
         fgmask = backSubtractor.apply(gray)  #background subtraction
         
@@ -51,17 +52,20 @@ while(True):
                     counter += 1
             
                 if counter > 17:
+                    fall = True
+                if fall == True:
                     cv2.putText(frame, 'Fall Detected', (x-10, y-10), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (255,255,255), 2)
                     cv2.rectangle(frame,(x,y),(x+w,y+h),(0,0,255),2)
-
                 #If the person stands up again
                 if h > w:
+                    fall = False
                     counter = 0 
                     cv2.rectangle(frame,(x,y),(x+w,y+h),(0,255,0),2)
 
 
             cv2.imshow('F.E.L.L', frame)
             cv2.imshow('Maksed',fgmask)
+
 
             if cv2.waitKey(33) == ord('q'):
                 break
